@@ -1,0 +1,12 @@
+---
+- name:
+  apt:
+    name: haproxy
+
+- name: copy haconfig
+  copy:
+    src: haproxy.cfg
+    dest: /etc/haproxy/haproxy.cfg
+
+  notify:
+    - restart ha

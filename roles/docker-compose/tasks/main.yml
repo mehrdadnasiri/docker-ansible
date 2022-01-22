@@ -1,0 +1,15 @@
+---
+# tasks file for docker-compose
+
+- name: check docker-compose exist
+  shell: which docker-compose
+  register: result
+  ignore_errors: yes
+
+
+- name: Install docker-compose
+  get_url: 
+    url : https://github.com/docker/compose/releases/download/1.25.1-rc1/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 'u+x,g+x'
+  when: result.rc == 1

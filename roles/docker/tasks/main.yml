@@ -1,0 +1,37 @@
+---
+# tasks file for docker
+
+- name: check docker exist
+  shell: which docker
+  register: result
+  ignore_errors: yes
+
+- name: Update Repository cache
+  apt: 
+    update_cache: true
+    cache_valid_time: 3600
+    force_apt_get: true
+
+- name: Install required system packages
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'apt-transport-https', 'ca-certificates', 'curl', 'software-properties-common', 'python3-pip', 'virtualenv', 'python3-setuptools']
+  when: result.rc == 1
+
+  
+
+- name: Add Docker GPG apt Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+  when: result.rc == 1
+
+- name: Add Docker Repository
+  apt_repository:
+    repo: deb https://download.docker.com/linux/ubuntu bionic stable
+    state: present
+  when: result.rc == 1
+
+- name: Install Docker Modules
+  apt: name={{ item }} state=latest update_cache=yes
+  loop: [ 'docker-ce', 'docker-ce-cli', 'containerd.io']
+  when: result.rc == 1
